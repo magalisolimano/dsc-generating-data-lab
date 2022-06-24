@@ -1,4 +1,3 @@
-
 # Generating Data - Lab
 
 ## Introduction
@@ -11,7 +10,7 @@ In this lab you will:
 - Generate datasets for classification problems
 - Generate datasets for regression problems
 
-## Generate data for classfication
+## Generate Data for Classfication
 
 Use `make_blobs()` to create a binary classification dataset with 100 samples, 2 features, and 2 centers (where each center corresponds to a different class label). Set `random_state = 42` for reproducibility.
 
@@ -26,7 +25,6 @@ _Hint: Here's a link to the documentation for_ [`make_blobs()`](https://scikit-l
 ```python
 # __SOLUTION__
 from sklearn.datasets import make_blobs
-
 X, y = make_blobs(n_samples=100, centers=2, n_features=2, random_state=42)
 ```
 
@@ -42,9 +40,10 @@ _Hint: Your dataframe should have three columns in total, two for the features a
 
 ```python
 # __SOLUTION__
-import pandas as pd 
-df = pd.DataFrame(dict(x=X[:, 0], y=X[:, 1], label=y))
-df.head()
+import pandas as pd
+df = pd.DataFrame(X, columns=["X1", "X2"])
+df["y"] = y
+df
 ```
 
 
@@ -68,52 +67,86 @@ df.head()
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>x</th>
+      <th>X1</th>
+      <th>X2</th>
       <th>y</th>
-      <th>label</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>0</td>
+      <th>0</th>
       <td>-2.988372</td>
       <td>8.828627</td>
       <td>0</td>
     </tr>
     <tr>
-      <td>1</td>
+      <th>1</th>
       <td>5.722930</td>
       <td>3.026972</td>
       <td>1</td>
     </tr>
     <tr>
-      <td>2</td>
+      <th>2</th>
       <td>-3.053580</td>
       <td>9.125209</td>
       <td>0</td>
     </tr>
     <tr>
-      <td>3</td>
+      <th>3</th>
       <td>5.461939</td>
       <td>3.869963</td>
       <td>1</td>
     </tr>
     <tr>
-      <td>4</td>
+      <th>4</th>
       <td>4.867339</td>
       <td>3.280312</td>
       <td>1</td>
     </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>95</th>
+      <td>-1.478198</td>
+      <td>9.945566</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>96</th>
+      <td>-1.593796</td>
+      <td>9.343037</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>97</th>
+      <td>3.793085</td>
+      <td>0.458322</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>98</th>
+      <td>-2.728870</td>
+      <td>9.371399</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>99</th>
+      <td>-2.504084</td>
+      <td>8.779699</td>
+      <td>0</td>
+    </tr>
   </tbody>
 </table>
+<p>100 rows × 3 columns</p>
 </div>
 
 
 
 Create a scatter plot of the data, while color-coding the different classes.
-
-_Hint: You may find this dictionary mapping class labels to colors useful: 
-`colors = {0: 'red', 1: 'blue'}`_
 
 
 ```python
@@ -123,22 +156,33 @@ _Hint: You may find this dictionary mapping class labels to colors useful:
 
 ```python
 # __SOLUTION__
-
-# Import relevant libraries
-import matplotlib.pyplot as plt 
-%matplotlib inline 
-
-colors = {0: 'red', 1: 'blue'}
+# Matplotlib approach
+import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots()
-grouped = df.groupby('label')
-
-for key, group in grouped:
-    group.plot(ax=ax,kind='scatter', x ='x', y='y', label=key, color=colors[key])
+sc = ax.scatter(df["X1"], df["X2"], c=df["y"], cmap="viridis")
+ax.set_xlabel("X1")
+ax.set_ylabel("X2")
+ax.legend(*sc.legend_elements());
 ```
 
 
+    
 ![png](index_files/index_10_0.png)
+    
+
+
+
+```python
+# __SOLUTION__
+# pandas plotting approach
+df.plot.scatter(x="X1", y="X2", c="y", colormap="viridis", sharex=False);
+```
+
+
+    
+![png](index_files/index_11_0.png)
+    
 
 
 Repeat this exercise two times by setting `cluster_std = 0.5` and `cluster_std = 2`. 
@@ -157,50 +201,44 @@ What is the effect of changing `cluster_std` based on your plots?
 ```python
 # Your code here: 
 # cluster_std = 0.5
+
 ```
 
 
 ```python
 # __SOLUTION__
-
 X, y = make_blobs(n_samples=100, centers=2, n_features=2, cluster_std=0.5, random_state=42)
-df = pd.DataFrame(dict(x=X[:, 0],  y=X[:, 1], label=y))
-colors = {0: 'red', 1: 'blue'}
-
-fig, ax = plt.subplots()
-grouped = df.groupby('label')
-
-for key, group in grouped:
-    group.plot(ax=ax,kind='scatter', x ='x', y='y', label=key, color=colors[key])
+df = pd.DataFrame(X, columns=["X1", "X2"])
+df["y"] = y
+df.plot.scatter(x="X1", y="X2", c="y", colormap="viridis", sharex=False);
 ```
 
 
-![png](index_files/index_13_0.png)
+    
+![png](index_files/index_14_0.png)
+    
 
 
 
 ```python
 # Your code here: 
-# clusted_std = 2
+# cluster_std = 2
+
 ```
 
 
 ```python
 # __SOLUTION__
-
 X, y = make_blobs(n_samples=100, centers=2, n_features=2, cluster_std=2, random_state=42)
-df = pd.DataFrame(dict(x=X[:, 0],  y=X[:, 1], label=y))
-colors = {0: 'red', 1: 'blue'}
-
-fig, ax = plt.subplots()
-grouped = df.groupby('label')
-
-for key, group in grouped:
-    group.plot(ax=ax,kind='scatter', x ='x', y='y', label=key, color=colors[key])
+df = pd.DataFrame(X, columns=["X1", "X2"])
+df["y"] = y
+df.plot.scatter(x="X1", y="X2", c="y", colormap="viridis", sharex=False);
 ```
 
 
-![png](index_files/index_15_0.png)
+    
+![png](index_files/index_16_0.png)
+    
 
 
 
@@ -224,7 +262,7 @@ for key, group in grouped:
 # we've created. 
 ```
 
-## Generate data for regression
+## Generate Data for Regression
 
 Create a function `reg_simulation()` to run a regression simulation creating a number of datasets with the `make_regression()` data generation function. Perform the following tasks:
 
@@ -241,18 +279,18 @@ Create a function `reg_simulation()` to run a regression simulation creating a n
 ```python
 # Import necessary libraries
 
-
 def reg_simulation(n, random_state):
-    
     # Generate X and y
+    
+    # Fit a linear regression model to X, y
 
     # Use X,y to draw a scatter plot
-    # Fit a linear regression model to X , y and calculate r2
-    # label and plot the regression line 
+    
+    # Label and plot the regression line
     pass
 
 
-random_state = random_state = np.random.RandomState(42)
+random_state = 42
 
 for n in [10, 25, 40, 50, 100, 200]:
     reg_simulation(n, random_state)
@@ -263,55 +301,67 @@ for n in [10, 25, 40, 50, 100, 200]:
 # __SOLUTION__ 
 
 # Import necessary libraries
-import matplotlib.pyplot as plt
-%matplotlib inline
 from sklearn.datasets import make_regression
 from sklearn.linear_model import LinearRegression
-import numpy as np
 
 def reg_simulation(n, random_state):
+    # Generate X and y
     X, y = make_regression(n_samples=100, n_features=1, noise=n, random_state=random_state)
-
-    plt.scatter(X[:, 0], y, color='red', s=10, label='Data')
-
+    # Fit a linear regression model to X, y
     reg = LinearRegression().fit(X, y)
-    plt.plot(X[:, 0], reg.predict(X), color='black', label='Model')
-    plt.title('Noise: ' + str(n) + ', R-Squared: ' + str(round(reg.score(X,y), 2)))
-    plt.tick_params(labelbottom=False, labelleft=False)
-    plt.xlabel('Variable X')
-    plt.ylabel('Variable Y')
-    plt.legend()
-    plt.show()
+    
+    # Use X,y to draw a scatter plot
+    fig, ax = plt.subplots()
+    ax.scatter(X, y, color='red', s=10, label='Data')
+    ax.tick_params(labelbottom=False, labelleft=False)
+    ax.set_xlabel('X')
+    ax.set_ylabel('y')
+    
+    # Label and plot the regression line
+    ax.plot(X, reg.predict(X), color='black', label='Model')
+    fig.suptitle(f'Noise: {n}, R-Squared: {round(reg.score(X,y), 2)}')
+    ax.legend()
 
-random_state = np.random.RandomState(42)
-
+random_state = 42
 
 for n in [10, 25, 40, 50, 100, 200]:
     reg_simulation(n, random_state)
 ```
 
 
-![png](index_files/index_20_0.png)
+    
+![png](index_files/index_21_0.png)
+    
 
 
 
-![png](index_files/index_20_1.png)
+    
+![png](index_files/index_21_1.png)
+    
 
 
 
-![png](index_files/index_20_2.png)
+    
+![png](index_files/index_21_2.png)
+    
 
 
 
-![png](index_files/index_20_3.png)
+    
+![png](index_files/index_21_3.png)
+    
 
 
 
-![png](index_files/index_20_4.png)
+    
+![png](index_files/index_21_4.png)
+    
 
 
 
-![png](index_files/index_20_5.png)
+    
+![png](index_files/index_21_5.png)
+    
 
 
 
@@ -323,7 +373,8 @@ for n in [10, 25, 40, 50, 100, 200]:
 ```python
 # __SOLUTION__ 
 
-# As the noise level increases, the coefficient of determination of our model fit decreases. 
+# As the noise level increases, the data points get farther away from
+# the model line and the coefficient of determination of our model fit decreases. 
 ```
 
 ## Summary 
